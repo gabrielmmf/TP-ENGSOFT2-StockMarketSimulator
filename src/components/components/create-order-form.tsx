@@ -1,10 +1,10 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
-import { type Order, type CreateOrderAttributes } from '../../../interfaces'
-import OrderSide from '../../../interfaces/order/order-side'
+import { type Order, type CreateOrderAttributes } from '../../interfaces'
+import OrderSide from '../../interfaces/order/order-side'
 import { v4 } from 'uuid'
 import '../order-styles.css'
-import { createOrder } from '../../../services/create-order'
+import { createOrder } from '../../services/create-order'
 
 interface CreateOrderFormProps {
   buyOrders: Order[]

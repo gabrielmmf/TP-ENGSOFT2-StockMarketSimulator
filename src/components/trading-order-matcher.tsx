@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { type Order } from '../../interfaces'
+import { type Order } from '../interfaces'
 import CreateOrderForm from './components/create-order-form'
 import OrdersTable from './components/orders-table'
 import './order-styles.css'

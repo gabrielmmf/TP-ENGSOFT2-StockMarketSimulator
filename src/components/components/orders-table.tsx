@@ -1,5 +1,5 @@
 import React from 'react'
-import { type Order } from '../../../interfaces'
+import { type Order } from '../../interfaces'
 import '../order-styles.css'
 
 interface OrdersTableProps {
