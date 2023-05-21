@@ -25,7 +25,7 @@ export default function CreateOrderForm ({ buyOrders, sellOrders, fulfilledOrder
       id: v4(),
       quantityRemaining: Number(newOrder.quantity),
       quantity: Number(newOrder.quantity),
-      price: Number(newOrder.price),
+      price: Number(newOrder.price)
     }
 
     const newOrders = createOrder({ buyOrders, sellOrders, fulfilledOrders, order })
