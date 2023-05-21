@@ -2,11 +2,6 @@ import { type Order } from '../interfaces'
 import OrderSide from '../interfaces/order/order-side'
 import type CreateOrderRequest from '../interfaces/order/create-order-request'
 
-const insertAndSortOrders = (orders: Order[], order: Order) => {
-  orders.unshift(order)
-  orders.sort((order1, order2) => order1.price - order2.price)
-}
-
 export const createOrder = (orderRequest: CreateOrderRequest) => {
   matchOrder(orderRequest)
   if (orderRequest.order.quantityRemaining > 0) {
@@ -19,24 +14,6 @@ export const createOrder = (orderRequest: CreateOrderRequest) => {
     orderRequest.fulfilledOrders.push(orderRequest.order)
   }
   return orderRequest
-}
-
-const retrieveOrderList = (orderRequest: CreateOrderRequest): Order[] => {
-  return orderRequest.order.side === OrderSide.BUY ? orderRequest.sellOrders : orderRequest.buyOrders
-}
-
-const isOrdersMatching = (lastOrder: Order, orderRequest: CreateOrderRequest) => {
-  if (orderRequest.order.side === OrderSide.BUY) {
-    if (lastOrder.price <= orderRequest.order.price) {
-      return false
-    }
-  } else {
-    if (lastOrder.price >= orderRequest.order.price) {
-      return false
-    }
-  }
-
-  return true
 }
 
 const matchOrder = (orderRequest: CreateOrderRequest) => {
@@ -65,3 +42,27 @@ const matchOrder = (orderRequest: CreateOrderRequest) => {
   }
   matchOrder(orderRequest)
 }
+
+const insertAndSortOrders = (orders: Order[], order: Order) => {
+  orders.unshift(order)
+  orders.sort((order1, order2) => order1.price - order2.price)
+}
+
+const retrieveOrderList = (orderRequest: CreateOrderRequest): Order[] => {
+  return orderRequest.order.side === OrderSide.BUY ? orderRequest.sellOrders : orderRequest.buyOrders
+}
+
+const isOrdersMatching = (lastOrder: Order, orderRequest: CreateOrderRequest) => {
+  if (orderRequest.order.side === OrderSide.BUY) {
+    if (lastOrder.price <= orderRequest.order.price) {
+      return false
+    }
+  } else {
+    if (lastOrder.price >= orderRequest.order.price) {
+      return false
+    }
+  }
+  return true
+}
+
+
