@@ -3,15 +3,18 @@ import OrderSide from '../interfaces/order/order-side'
 
 interface CreateOrderRequest { buyOrders: Order[], sellOrders: Order[], fulfilledOrders: Order[], order: Order }
 
+const insertAndSortOrders = (orders: Order[], order: Order) => {
+  orders.unshift(order)
+  orders.sort((order1, order2) => order1.price - order2.price)
+}
+
 export const createOrder = ({ buyOrders, sellOrders, fulfilledOrders, order }: CreateOrderRequest) => {
   matchOrder({ buyOrders, sellOrders, fulfilledOrders, order })
   if (order.quantityRemaining > 0) {
     if (order.side === OrderSide.BUY) {
-      buyOrders.unshift(order)
-      buyOrders.sort((order1, order2) => order1.price - order2.price)
+      insertAndSortOrders(buyOrders, order)
     } else {
-      sellOrders.unshift(order)
-      sellOrders.sort((order1, order2) => order2.price - order1.price)
+      insertAndSortOrders(sellOrders, order)
     }
   } else {
     fulfilledOrders.push(order)
