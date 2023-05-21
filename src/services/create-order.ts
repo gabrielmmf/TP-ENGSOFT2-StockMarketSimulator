@@ -21,22 +21,40 @@ export const createOrder = (orderRequest: CreateOrderRequest) => {
   return orderRequest
 }
 
+const retrieveOrderList = (orderRequest: CreateOrderRequest): Order[] => {
+  return orderRequest.order.side === OrderSide.BUY ? orderRequest.sellOrders : orderRequest.buyOrders
+}
+
+const isOrdersMatching = (lastOrder: Order, orderRequest: CreateOrderRequest) => {
+  if (orderRequest.order.side === OrderSide.BUY) {
+    if (lastOrder.price <= orderRequest.order.price) {
+      return false
+    }
+  } else {
+    if (lastOrder.price >= orderRequest.order.price) {
+      return false
+    }
+  }
+
+  return true
+}
+
 const matchOrder = (orderRequest: CreateOrderRequest) => {
   if (orderRequest.order.quantityRemaining === 0) {
     return
   }
-  const isBuy = orderRequest.order.side === OrderSide.BUY
-  const matchingOrderList = isBuy ? orderRequest.sellOrders : orderRequest.buyOrders
+
+  const matchingOrderList = retrieveOrderList(orderRequest)
   const matchingOrder = matchingOrderList.pop()
   if (matchingOrder == null) {
     return
   }
-  if (!(isBuy
-    ? matchingOrder.price <= orderRequest.order.price
-    : orderRequest.order.price <= matchingOrder.price)) {
+
+  if (isOrdersMatching(matchingOrder, orderRequest)) {
     matchingOrderList.push(matchingOrder)
     return
   }
+
   const filledQuantity = Math.min(matchingOrder.quantityRemaining, orderRequest.order.quantityRemaining)
   orderRequest.order.quantityRemaining -= filledQuantity
   matchingOrder.quantityRemaining -= filledQuantity
