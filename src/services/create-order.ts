@@ -1,50 +1,49 @@
 import { type Order } from '../interfaces'
 import OrderSide from '../interfaces/order/order-side'
-
-interface CreateOrderRequest { buyOrders: Order[], sellOrders: Order[], fulfilledOrders: Order[], order: Order }
+import type CreateOrderRequest from '../interfaces/order/create-order-request'
 
 const insertAndSortOrders = (orders: Order[], order: Order) => {
   orders.unshift(order)
   orders.sort((order1, order2) => order1.price - order2.price)
 }
 
-export const createOrder = ({ buyOrders, sellOrders, fulfilledOrders, order }: CreateOrderRequest) => {
-  matchOrder({ buyOrders, sellOrders, fulfilledOrders, order })
-  if (order.quantityRemaining > 0) {
-    if (order.side === OrderSide.BUY) {
-      insertAndSortOrders(buyOrders, order)
+export const createOrder = (orderRequest: CreateOrderRequest) => {
+  matchOrder(orderRequest)
+  if (orderRequest.order.quantityRemaining > 0) {
+    if (orderRequest.order.side === OrderSide.BUY) {
+      insertAndSortOrders(orderRequest.buyOrders, orderRequest.order)
     } else {
-      insertAndSortOrders(sellOrders, order)
+      insertAndSortOrders(orderRequest.sellOrders, orderRequest.order)
     }
   } else {
-    fulfilledOrders.push(order)
+    orderRequest.fulfilledOrders.push(orderRequest.order)
   }
-  return { buyOrders, sellOrders, fulfilledOrders }
+  return orderRequest
 }
 
-const matchOrder = ({ buyOrders, sellOrders, fulfilledOrders, order }: { buyOrders: Order[], sellOrders: Order[], fulfilledOrders: Order[], order: Order }) => {
-  if (order.quantityRemaining === 0) {
+const matchOrder = (orderRequest: CreateOrderRequest) => {
+  if (orderRequest.order.quantityRemaining === 0) {
     return
   }
-  const isBuy = order.side === OrderSide.BUY
-  const matchingOrderList = isBuy ? sellOrders : buyOrders
+  const isBuy = orderRequest.order.side === OrderSide.BUY
+  const matchingOrderList = isBuy ? orderRequest.sellOrders : orderRequest.buyOrders
   const matchingOrder = matchingOrderList.pop()
   if (matchingOrder == null) {
     return
   }
   if (!(isBuy
-    ? matchingOrder.price <= order.price
-    : order.price <= matchingOrder.price)) {
+    ? matchingOrder.price <= orderRequest.order.price
+    : orderRequest.order.price <= matchingOrder.price)) {
     matchingOrderList.push(matchingOrder)
     return
   }
-  const filledQuantity = Math.min(matchingOrder.quantityRemaining, order.quantityRemaining)
-  order.quantityRemaining -= filledQuantity
+  const filledQuantity = Math.min(matchingOrder.quantityRemaining, orderRequest.order.quantityRemaining)
+  orderRequest.order.quantityRemaining -= filledQuantity
   matchingOrder.quantityRemaining -= filledQuantity
   if (matchingOrder.quantityRemaining > 0) {
     matchingOrderList.push(matchingOrder)
   } else {
-    fulfilledOrders.push(matchingOrder)
+    orderRequest.fulfilledOrders.push(matchingOrder)
   }
-  matchOrder({ buyOrders, sellOrders, fulfilledOrders, order })
+  matchOrder(orderRequest)
 }
