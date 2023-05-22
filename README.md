@@ -5,10 +5,14 @@ Esse projeto é um combinador de ordens de negociação que simula uma bolsa de 
 Por exemplo, digamos que temos três ordens de compra para uma ação: Ordem A com um preço de $50 colocada às 10:00, Ordem B com um preço de $51 colocada às 10:05, e Ordem C com um preço de $50 colocada às 10:10. Neste caso, a Ordem B seria priorizada primeiro devido ao seu preço mais alto, seguida pela Ordem A porque foi colocada antes da Ordem C no mesmo preço.
 
 ## Grupo :
-Gabriel Martins Medeiros Fialho
+Gabriel Martins Medeiros Fialho 
+
 Gabriel Torres Bolognani
+
 Mariano Glauber Torres Fernandes
+
 Samuel Henrique Miranda Alves
+
 ## Getting Started
 
 1. Run `npm install`
